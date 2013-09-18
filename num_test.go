@@ -74,4 +74,13 @@ func (s *S) TestIsNumber(c *C) {
 	c.Assert(IsNumber(0.4), Equals, true)
 	c.Assert(IsNumber("0.4"), Equals, false)
 	c.Assert(IsNumber(false), Equals, false)
+
+	c.Assert(IsDecimalNumber(0.1), Equals, true)
+	c.Assert(IsDecimalNumber(0), Equals, false)
+
+	c.Assert(IsSignedNumber(42), Equals, true)
+	c.Assert(IsSignedNumber(uint(42)), Equals, false)
+
+	c.Assert(IsUnsignedNumber(42), Equals, false)
+	c.Assert(IsUnsignedNumber(uint(42)), Equals, true)
 }
