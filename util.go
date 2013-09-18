@@ -18,7 +18,7 @@ func IsStruct(obj interface{}) bool {
 }
 
 func IsPointer(obj interface{}) bool {
-	return IsPointer(reflect.TypeOf(obj))
+	return isPointerType(reflect.TypeOf(obj))
 }
 
 func IsDefault(obj interface{}) (b bool) {

@@ -36,3 +36,17 @@ func (s *S) TestDefault(c *C) {
 	c.Assert(IsDefault(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)), Equals, false)
 	c.Assert(IsDefault(defaultTime), Equals, true)
 }
+
+func (s *S) TestIsPointer(c *C) {
+	i := 5
+	c.Assert(IsPointer(i), Equals, false)
+	c.Assert(IsPointer(&i), Equals, true)
+}
+
+func (s *S) TestIsStruct(c *C) {
+	i := 5
+	type Test struct {}
+	c.Assert(IsStruct(i), Equals, false)
+	c.Assert(IsStruct(Test{}), Equals, true)
+	c.Assert(IsStruct(&Test{}), Equals, false)
+}
