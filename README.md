@@ -1,4 +1,4 @@
-reflector [![Build Status](https://secure.travis-ci.org/101loops/reflector.png)](https://travis-ci.org/stephanos/reflector)
+reflector [![Build Status](https://secure.travis-ci.org/101loops/reflector.png)](https://travis-ci.org/reflector/reflector)
 =========
 
 This Go package extends the standard package *reflect* with useful utilities:
