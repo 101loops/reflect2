@@ -42,7 +42,8 @@ func (s *S) TestFloatNumberConversion(c *C) {
 	// Float -> Field
 
 	obj := &TestData{}
-	refl := NewStruct(obj)
+	refl, err := NewStructWriter(obj)
+	c.Assert(err, IsNil)
 
 	err = refl.SetFieldFloatValue("Num", f)
 	c.Assert(err, IsNil)

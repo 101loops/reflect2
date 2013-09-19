@@ -45,7 +45,7 @@ func (s *S) TestIsPointer(c *C) {
 
 func (s *S) TestIsStruct(c *C) {
 	i := 5
-	type Test struct {}
+	type Test struct{}
 	c.Assert(IsStruct(i), Equals, false)
 	c.Assert(IsStruct(Test{}), Equals, true)
 	c.Assert(IsStruct(&Test{}), Equals, false)

@@ -7,12 +7,6 @@ import (
 	"reflect"
 )
 
-type TestStruct struct {
-	unexported uint64
-	Dummy      string `test:"dummytag"`
-	Yummy      int    `test:"yummytag"`
-}
-
 // TESTS ==========================================================================================
 
 func (s *S) TestGetField_on_struct(c *C) {
@@ -20,7 +14,21 @@ func (s *S) TestGetField_on_struct(c *C) {
 		Dummy: "test",
 	}
 
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
+	value, err := refl.FieldValue("Dummy")
+	c.Assert(err, IsNil)
+	c.Assert(value, Equals, "test")
+}
+
+func (s *S) TestGetField_on_struct_pointer(c *C) {
+	dummyStruct := &TestStruct{
+		Dummy: "test",
+	}
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
 	value, err := refl.FieldValue("Dummy")
 	c.Assert(err, IsNil)
 	c.Assert(value, Equals, "test")
@@ -28,9 +36,8 @@ func (s *S) TestGetField_on_struct(c *C) {
 
 func (s *S) TestGetField_on_non_struct(c *C) {
 	dummy := "abc 123"
-	refl := NewStruct(&dummy)
 
-	_, err := refl.FieldValue("Dummy")
+	_, err := NewStructReader(dummy)
 	c.Assert(err, NotNil)
 }
 
@@ -38,9 +45,10 @@ func (s *S) TestGetField_non_existing_field(c *C) {
 	dummyStruct := TestStruct{
 		Dummy: "test",
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
-	_, err := refl.FieldValue("obladioblada")
+	_, err = refl.FieldValue("obladioblada")
 	c.Assert(err, NotNil)
 }
 
@@ -49,7 +57,8 @@ func (s *S) TestGetField_unexported_field(c *C) {
 		unexported: 12345,
 		Dummy:      "test",
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	c.Assert(func() {
 		refl.FieldValue("unexported")
@@ -61,7 +70,25 @@ func (s *S) TestFieldKind_on_struct(c *C) {
 		Dummy: "test",
 		Yummy: 123,
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
+	kind, err := refl.FieldKind("Dummy")
+	c.Assert(err, IsNil)
+	c.Assert(kind, Equals, reflect.String)
+
+	kind, err = refl.FieldKind("Yummy")
+	c.Assert(err, IsNil)
+	c.Assert(kind, Equals, reflect.Int)
+}
+
+func (s *S) TestFieldKind_on_struct_pointer(c *C) {
+	dummyStruct := &TestStruct{
+		Dummy: "test",
+		Yummy: 123,
+	}
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	kind, err := refl.FieldKind("Dummy")
 	c.Assert(err, IsNil)
@@ -74,9 +101,8 @@ func (s *S) TestFieldKind_on_struct(c *C) {
 
 func (s *S) TestFieldKind_on_non_struct(c *C) {
 	dummy := "abc 123"
-	refl := NewStruct(&dummy)
 
-	_, err := refl.FieldKind("Dummy")
+	_, err := NewStructReader(dummy)
 	c.Assert(err, NotNil)
 }
 
@@ -85,15 +111,33 @@ func (s *S) TestFieldKind_non_existing_field(c *C) {
 		Dummy: "test",
 		Yummy: 123,
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
-	_, err := refl.FieldKind("obladioblada")
+	_, err = refl.FieldKind("obladioblada")
 	c.Assert(err, NotNil)
 }
 
 func (s *S) TestFieldTag_on_struct(c *C) {
 	dummyStruct := TestStruct{}
-	refl := NewStruct(&dummyStruct)
+
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
+	tag, err := refl.FieldTag("Dummy", "test")
+	c.Assert(err, IsNil)
+	c.Assert(tag, Equals, "dummytag")
+
+	tag, err = refl.FieldTag("Yummy", "test")
+	c.Assert(err, IsNil)
+	c.Assert(tag, Equals, "yummytag")
+}
+
+func (s *S) TestFieldTag_on_struct_pointer(c *C) {
+	dummyStruct := &TestStruct{}
+
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	tag, err := refl.FieldTag("Dummy", "test")
 	c.Assert(err, IsNil)
@@ -106,17 +150,18 @@ func (s *S) TestFieldTag_on_struct(c *C) {
 
 func (s *S) TestFieldTag_on_non_struct(c *C) {
 	dummy := "abc 123"
-	refl := NewStruct(&dummy)
 
-	_, err := refl.FieldTag("Dummy", "test")
+	_, err := NewStructReader(dummy)
 	c.Assert(err, NotNil)
 }
 
 func (s *S) TestFieldTag_non_existing_field(c *C) {
 	dummyStruct := TestStruct{}
-	refl := NewStruct(&dummyStruct)
 
-	_, err := refl.FieldTag("obladioblada", "test")
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
+	_, err = refl.FieldTag("obladioblada", "test")
 	c.Assert(err, NotNil)
 }
 
@@ -125,57 +170,11 @@ func (s *S) TestFieldTag_unexported_field(c *C) {
 		unexported: 12345,
 		Dummy:      "test",
 	}
-	refl := NewStruct(&dummyStruct)
-
-	_, err := refl.FieldTag("unexported", "test")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestSetField_on_struct_with_valid_value_type(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl := NewStruct(&dummyStruct)
-
-	err := refl.SetFieldValue("Dummy", "abc")
+	refl, err := NewStructReader(dummyStruct)
 	c.Assert(err, IsNil)
-	c.Assert(dummyStruct.Dummy, Equals, "abc")
-}
 
-// func (s *S) TestSetField_on_non_struct(c *C) {
-//     dummy := "abc 123"
-
-//     err := SetFieldValue(&dummy, "Dummy", "abc")
-//     c.Assert(err, NotNil)
-// }
-
-func (s *S) TestSetField_non_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl := NewStruct(&dummyStruct)
-
-	err := refl.SetFieldValue("obladioblada", "life goes on")
+	_, err = refl.FieldTag("unexported", "test")
 	c.Assert(err, NotNil)
-}
-
-func (s *S) TestSetField_invalid_value_type(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl := NewStruct(&dummyStruct)
-
-	err := refl.SetFieldValue("Yummy", "123")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestSetField_non_exported_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl := NewStruct(&dummyStruct)
-
-	c.Assert(refl.SetFieldValue("unexported", "fail, bitch"), NotNil)
 }
 
 func (s *S) TestFields_on_struct(c *C) {
@@ -183,7 +182,21 @@ func (s *S) TestFields_on_struct(c *C) {
 		Dummy: "test",
 		Yummy: 123,
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
+	fields, err := refl.FieldNames()
+	c.Assert(err, IsNil)
+	c.Assert(fields, DeepEquals, []string{"Dummy", "Yummy"})
+}
+
+func (s *S) TestFields_on_struct_pointer(c *C) {
+	dummyStruct := &TestStruct{
+		Dummy: "test",
+		Yummy: 123,
+	}
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	fields, err := refl.FieldNames()
 	c.Assert(err, IsNil)
@@ -193,8 +206,7 @@ func (s *S) TestFields_on_struct(c *C) {
 func (s *S) TestFields_on_non_struct(c *C) {
 	dummy := "abc 123"
 
-	refl := NewStruct(&dummy)
-	_, err := refl.FieldNames()
+	_, err := NewStructReader(dummy)
 	c.Assert(err, NotNil)
 }
 
@@ -204,56 +216,12 @@ func (s *S) TestFields_with_non_exported_fields(c *C) {
 		Dummy:      "test",
 		Yummy:      123,
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	fields, err := refl.FieldNames()
 	c.Assert(err, IsNil)
 	c.Assert(fields, DeepEquals, []string{"Dummy", "Yummy"})
-}
-
-func (s *S) TestHasField_on_struct_with_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl := NewStruct(&dummyStruct)
-
-	has, err := refl.HasField("Dummy")
-	c.Assert(err, IsNil)
-	c.Assert(has, Equals, true)
-}
-
-func (s *S) TestHasField_non_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl := NewStruct(&dummyStruct)
-
-	has, err := refl.HasField("Test")
-	c.Assert(err, IsNil)
-	c.Assert(has, Equals, false)
-}
-
-func (s *S) TestHasField_on_non_struct(c *C) {
-	dummy := "abc 123"
-	refl := NewStruct(&dummy)
-
-	_, err := refl.HasField("Test")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestHasField_unexported_field(c *C) {
-	dummyStruct := TestStruct{
-		unexported: 7890,
-		Dummy:      "test",
-		Yummy:      123,
-	}
-	refl := NewStruct(&dummyStruct)
-
-	has, err := refl.HasField("unexported")
-	c.Assert(err, IsNil)
-	c.Assert(has, Equals, false)
 }
 
 func (s *S) TestTags_on_struct(c *C) {
@@ -261,7 +229,24 @@ func (s *S) TestTags_on_struct(c *C) {
 		Dummy: "test",
 		Yummy: 123,
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
+
+	tags, err := refl.Tags("test")
+	c.Assert(err, IsNil)
+	c.Assert(tags, DeepEquals, map[string]string{
+		"Dummy": "dummytag",
+		"Yummy": "yummytag",
+	})
+}
+
+func (s *S) TestTags_on_struct_pointer(c *C) {
+	dummyStruct := &TestStruct{
+		Dummy: "test",
+		Yummy: 123,
+	}
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	tags, err := refl.Tags("test")
 	c.Assert(err, IsNil)
@@ -273,9 +258,8 @@ func (s *S) TestTags_on_struct(c *C) {
 
 func (s *S) TestTags_on_non_struct(c *C) {
 	dummy := "abc 123"
-	refl := NewStruct(&dummy)
 
-	_, err := refl.Tags("test")
+	_, err := NewStructReader(dummy)
 	c.Assert(err, NotNil)
 }
 
@@ -284,7 +268,8 @@ func (s *S) TestItems_on_struct(c *C) {
 		Dummy: "test",
 		Yummy: 123,
 	}
-	refl := NewStruct(&dummyStruct)
+	refl, err := NewStructReader(dummyStruct)
+	c.Assert(err, IsNil)
 
 	tags, err := refl.KeyVal()
 	c.Assert(err, IsNil)
@@ -296,8 +281,7 @@ func (s *S) TestItems_on_struct(c *C) {
 
 func (s *S) TestItems_on_non_struct(c *C) {
 	dummy := "abc 123"
-	refl := NewStruct(&dummy)
 
-	_, err := refl.KeyVal()
+	_, err := NewStructReader(dummy)
 	c.Assert(err, NotNil)
 }
