@@ -30,18 +30,17 @@ func NewStructCodec(obj interface{}) (*StructCodec, error) {
 	} else if k == reflect.Ptr && v.Elem().Kind() == reflect.Struct {
 		return &StructCodec{v.Elem().Type()}, nil
 	}
-	return nil, fmt.Errorf("reflector: invalid entity type '%v'", k)
+	return nil, fmt.Errorf("reflector: invalid entity type %q", k)
 }
 
 // PUBLIC METHODS =================================================================================
 
-func (self *StructCodec) Type() reflect.Type {
-	return self.t
+func (codec *StructCodec) Type() reflect.Type {
+	return codec.t
 }
 
-func (self *StructCodec) FieldCodecs(tagNames []string) (res []*FieldCodec, err error) {
-	res = make([]*FieldCodec, 0)
-	err = self.iterate(func(i int, f reflect.StructField) error {
+func (codec *StructCodec) FieldCodecs(tagNames []string) (res []*FieldCodec, err error) {
+	err = codec.iterate(func(i int, f reflect.StructField) error {
 		code, err := codec(i, f, tagNames)
 		if code != nil {
 			res = append(res, code)
@@ -52,8 +51,8 @@ func (self *StructCodec) FieldCodecs(tagNames []string) (res []*FieldCodec, err 
 }
 
 // HasField checks if the provided field name is part of the struct.
-func (self *StructCodec) HasField(name string) bool {
-	field, ok := self.t.FieldByName(name)
+func (codec *StructCodec) HasField(name string) bool {
+	field, ok := codec.t.FieldByName(name)
 	if !ok || !IsExportableField(field) {
 		return false
 	}
@@ -62,10 +61,10 @@ func (self *StructCodec) HasField(name string) bool {
 
 // PRIVATE METHODS ================================================================================
 
-func (self *StructCodec) iterate(fn func(int, reflect.StructField) error) error {
-	fieldsCount := self.t.NumField()
+func (codec *StructCodec) iterate(fn func(int, reflect.StructField) error) error {
+	fieldsCount := codec.t.NumField()
 	for i := 0; i < fieldsCount; i++ {
-		field := self.t.Field(i)
+		field := codec.t.Field(i)
 		if IsExportableField(field) {
 			err := fn(i, field)
 			if err != nil {
@@ -80,7 +79,7 @@ func (self *StructCodec) iterate(fn func(int, reflect.StructField) error) error 
 
 func codec(i int, f reflect.StructField, tagNames []string) (res *FieldCodec, err error) {
 	t := f.Type
-	res = &FieldCodec{i, f.Name, f.Name, make([]string, 0), t}
+	res = &FieldCodec{Index: i, Name: f.Name, Label: f.Name, Tags: make([]string, 0), Type: t}
 
 	// iterate over tag names (reverse: 1st item overwrites 2nd etc.)
 	for i := len(tagNames) - 1; i >= 0; i-- {

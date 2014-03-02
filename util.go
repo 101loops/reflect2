@@ -5,10 +5,6 @@ import (
 	"time"
 )
 
-var (
-	defaultTime time.Time
-)
-
 func IsExportableField(field reflect.StructField) bool {
 	return field.PkgPath == "" // PkgPath is empty for exported fields.
 }
@@ -54,7 +50,7 @@ func IsDefault(obj interface{}) (b bool) {
 	case float64:
 		b = (v == float64(0))
 	case time.Time:
-		b = (v == defaultTime)
+		b = v.IsZero()
 	default:
 		// TODO: use reflection
 	}
@@ -68,5 +64,5 @@ func isStructType(typ reflect.Type) bool {
 }
 
 func isPointerType(typ reflect.Type) bool {
-	return typ.Kind() == reflect.Ptr
+	return typ != nil && typ.Kind() == reflect.Ptr
 }

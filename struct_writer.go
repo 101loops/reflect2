@@ -28,14 +28,14 @@ func NewStructWriter(obj interface{}) (*StructWriter, error) {
 // PUBLIC METHODS =================================================================================
 
 // SetField sets the struct's field to the provided value.
-func (self *StructWriter) SetFieldValue(name string, value interface{}) (err error) {
+func (writer *StructWriter) SetFieldValue(name string, value interface{}) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("reflector: panic: %v", r)
 		}
 	}()
 
-	structValue := reflect.ValueOf(self.obj).Elem()
+	structValue := reflect.ValueOf(writer.obj).Elem()
 	structFieldValue := structValue.FieldByName(name)
 
 	if !structFieldValue.IsValid() {
@@ -56,8 +56,8 @@ func (self *StructWriter) SetFieldValue(name string, value interface{}) (err err
 	return
 }
 
-func (self *StructWriter) SetFieldFloatValue(field string, source float64) (err error) {
-	if fieldKind, err := self.FieldKind(field); err == nil {
+func (writer *StructWriter) SetFieldFloatValue(field string, source float64) (err error) {
+	if fieldKind, err := writer.FieldKind(field); err == nil {
 		var apply interface{}
 		switch fieldKind {
 		case reflect.Int:
@@ -87,7 +87,7 @@ func (self *StructWriter) SetFieldFloatValue(field string, source float64) (err 
 		default:
 			return fmt.Errorf("reflector: field '%T' is not a number", field)
 		}
-		err = self.SetFieldValue(field, apply)
+		err = writer.SetFieldValue(field, apply)
 	}
 	return
 }

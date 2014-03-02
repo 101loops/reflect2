@@ -36,8 +36,8 @@ func NewStructReader(obj interface{}) (*StructReader, error) {
 // PUBLIC METHODS =================================================================================
 
 // Fields iterates over the struct's fields and calls the provided function with each field.
-func (self *StructReader) Iterate(tagNames []string, fn func(*Field) error) error {
-	fields, err := self.Fields(tagNames)
+func (reader *StructReader) Iterate(tagNames []string, fn func(*Field) error) error {
+	fields, err := reader.Fields(tagNames)
 	if err == nil {
 		for _, f := range fields {
 			err = fn(f)
@@ -50,10 +50,9 @@ func (self *StructReader) Iterate(tagNames []string, fn func(*Field) error) erro
 }
 
 // Fields returns the struct's fields.
-func (self *StructReader) Fields(tagNames []string) (res []*Field, err error) {
-	res = make([]*Field, 0)
-	err = self.iterate(func(i int, f reflect.StructField) error {
-		fld, err := field(i, self.val.Field(i), f, tagNames)
+func (reader *StructReader) Fields(tagNames []string) (res []*Field, err error) {
+	err = reader.iterate(func(i int, f reflect.StructField) error {
+		fld, err := field(i, reader.val.Field(i), f, tagNames)
 		if fld != nil {
 			res = append(res, fld)
 		}
@@ -63,9 +62,9 @@ func (self *StructReader) Fields(tagNames []string) (res []*Field, err error) {
 }
 
 // FieldNames returns the struct fields name list.
-func (self *StructReader) FieldNames() ([]string, error) {
+func (reader *StructReader) FieldNames() ([]string, error) {
 	var fields []string
-	err := self.iterate(func(_ int, f reflect.StructField) error {
+	err := reader.iterate(func(_ int, f reflect.StructField) error {
 		fields = append(fields, f.Name)
 		return nil
 	})
@@ -73,9 +72,9 @@ func (self *StructReader) FieldNames() ([]string, error) {
 }
 
 // Tags lists the struct tag fields.
-func (self *StructReader) Tags(key string) (map[string]string, error) {
+func (reader *StructReader) Tags(key string) (map[string]string, error) {
 	tags := make(map[string]string)
-	err := self.iterate(func(_ int, f reflect.StructField) error {
+	err := reader.iterate(func(_ int, f reflect.StructField) error {
 		tags[f.Name] = f.Tag.Get(key)
 		return nil
 	})
@@ -83,8 +82,8 @@ func (self *StructReader) Tags(key string) (map[string]string, error) {
 }
 
 // FieldValue returns the value of the struct field.
-func (self *StructReader) FieldValue(name string) (interface{}, error) {
-	field := self.val.FieldByName(name)
+func (reader *StructReader) FieldValue(name string) (interface{}, error) {
+	field := reader.val.FieldByName(name)
 	if !field.IsValid() {
 		return nil, fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
@@ -92,8 +91,8 @@ func (self *StructReader) FieldValue(name string) (interface{}, error) {
 }
 
 // FieldType returns the kind of the struct field.
-func (self *StructReader) FieldType(name string) (reflect.Type, error) {
-	field := self.val.FieldByName(name)
+func (reader *StructReader) FieldType(name string) (reflect.Type, error) {
+	field := reader.val.FieldByName(name)
 	if !field.IsValid() {
 		return nil, fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
@@ -101,8 +100,8 @@ func (self *StructReader) FieldType(name string) (reflect.Type, error) {
 }
 
 // FieldKind returns the kind of the struct field.
-func (self *StructReader) FieldKind(name string) (reflect.Kind, error) {
-	typ, err := self.FieldType(name)
+func (reader *StructReader) FieldKind(name string) (reflect.Kind, error) {
+	typ, err := reader.FieldType(name)
 	if err != nil {
 		return reflect.Invalid, err
 	}
@@ -110,8 +109,8 @@ func (self *StructReader) FieldKind(name string) (reflect.Kind, error) {
 }
 
 // FieldTag returns the struct's field tag value.
-func (self *StructReader) FieldTag(name, tagKey string) (string, error) {
-	field, ok := self.Type().FieldByName(name)
+func (reader *StructReader) FieldTag(name, tagKey string) (string, error) {
+	field, ok := reader.Type().FieldByName(name)
 	if !ok {
 		return "", fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
@@ -124,14 +123,14 @@ func (self *StructReader) FieldTag(name, tagKey string) (string, error) {
 }
 
 // KeyVal returns the field/value struct pairs as a map.
-func (self *StructReader) KeyVal() (map[string]interface{}, error) {
-	fieldsCount := self.Type().NumField()
+func (reader *StructReader) KeyVal() (map[string]interface{}, error) {
+	fieldsCount := reader.Type().NumField()
 
 	items := make(map[string]interface{})
 
 	for i := 0; i < fieldsCount; i++ {
-		field := self.Type().Field(i)
-		fieldValue := self.val.Field(i)
+		field := reader.Type().Field(i)
+		fieldValue := reader.val.Field(i)
 
 		// Make sure only exportable and addressable fields are returned
 		if IsExportableField(field) {

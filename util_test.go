@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+var (
+	defaultTime time.Time
+)
+
 type MyString string
 
 // TESTS ==========================================================================================
