@@ -1,283 +1,288 @@
 package reflector
 
 import (
-	. "launchpad.net/gocheck"
+	. "github.com/101loops/bdd"
 	"reflect"
 )
 
-func (s *S) TestGetField_on_struct(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
+var _ = Describe("Struct Codec Reader", func() {
 
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
+	It("get field: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
 
-	value, err := refl.FieldValue("Dummy")
-	c.Assert(err, IsNil)
-	c.Assert(value, Equals, "test")
-}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestGetField_on_struct_pointer(c *C) {
-	dummyStruct := &TestStruct{
-		Dummy: "test",
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	value, err := refl.FieldValue("Dummy")
-	c.Assert(err, IsNil)
-	c.Assert(value, Equals, "test")
-}
-
-func (s *S) TestGetField_on_non_struct(c *C) {
-	dummy := "abc 123"
-
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestGetField_non_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	_, err = refl.FieldValue("obladioblada")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestGetField_unexported_field(c *C) {
-	dummyStruct := TestStruct{
-		unexported: 12345,
-		Dummy:      "test",
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	c.Assert(func() {
-		refl.FieldValue("unexported")
-	}, PanicMatches, ".*unexported field.*")
-}
-
-func (s *S) TestFieldKind_on_struct(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	kind, err := refl.FieldKind("Dummy")
-	c.Assert(err, IsNil)
-	c.Assert(kind, Equals, reflect.String)
-
-	kind, err = refl.FieldKind("Yummy")
-	c.Assert(err, IsNil)
-	c.Assert(kind, Equals, reflect.Int)
-}
-
-func (s *S) TestFieldKind_on_struct_pointer(c *C) {
-	dummyStruct := &TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	kind, err := refl.FieldKind("Dummy")
-	c.Assert(err, IsNil)
-	c.Assert(kind, Equals, reflect.String)
-
-	kind, err = refl.FieldKind("Yummy")
-	c.Assert(err, IsNil)
-	c.Assert(kind, Equals, reflect.Int)
-}
-
-func (s *S) TestFieldKind_on_non_struct(c *C) {
-	dummy := "abc 123"
-
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestFieldKind_non_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	_, err = refl.FieldKind("obladioblada")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestFieldTag_on_struct(c *C) {
-	dummyStruct := TestStruct{}
-
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	tag, err := refl.FieldTag("Dummy", "test")
-	c.Assert(err, IsNil)
-	c.Assert(tag, Equals, "dummytag")
-
-	tag, err = refl.FieldTag("Yummy", "test")
-	c.Assert(err, IsNil)
-	c.Assert(tag, Equals, "yummytag")
-}
-
-func (s *S) TestFieldTag_on_struct_pointer(c *C) {
-	dummyStruct := &TestStruct{}
-
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	tag, err := refl.FieldTag("Dummy", "test")
-	c.Assert(err, IsNil)
-	c.Assert(tag, Equals, "dummytag")
-
-	tag, err = refl.FieldTag("Yummy", "test")
-	c.Assert(err, IsNil)
-	c.Assert(tag, Equals, "yummytag")
-}
-
-func (s *S) TestFieldTag_on_non_struct(c *C) {
-	dummy := "abc 123"
-
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestFieldTag_non_existing_field(c *C) {
-	dummyStruct := TestStruct{}
-
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	_, err = refl.FieldTag("obladioblada", "test")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestFieldTag_unexported_field(c *C) {
-	dummyStruct := TestStruct{
-		unexported: 12345,
-		Dummy:      "test",
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	_, err = refl.FieldTag("unexported", "test")
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestFields_on_struct(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	fields, err := refl.FieldNames()
-	c.Assert(err, IsNil)
-	c.Assert(fields, DeepEquals, []string{"Dummy", "Yummy"})
-}
-
-func (s *S) TestFields_on_struct_pointer(c *C) {
-	dummyStruct := &TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	fields, err := refl.FieldNames()
-	c.Assert(err, IsNil)
-	c.Assert(fields, DeepEquals, []string{"Dummy", "Yummy"})
-}
-
-func (s *S) TestFields_on_non_struct(c *C) {
-	dummy := "abc 123"
-
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestFields_with_non_exported_fields(c *C) {
-	dummyStruct := TestStruct{
-		unexported: 6789,
-		Dummy:      "test",
-		Yummy:      123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	fields, err := refl.FieldNames()
-	c.Assert(err, IsNil)
-	c.Assert(fields, DeepEquals, []string{"Dummy", "Yummy"})
-}
-
-func (s *S) TestTags_on_struct(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	tags, err := refl.Tags("test")
-	c.Assert(err, IsNil)
-	c.Assert(tags, DeepEquals, map[string]string{
-		"Dummy": "dummytag",
-		"Yummy": "yummytag",
+		value, err := refl.FieldValue("Dummy")
+		Check(err, IsNil)
+		Check(value, Equals, "test")
 	})
-}
 
-func (s *S) TestTags_on_struct_pointer(c *C) {
-	dummyStruct := &TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
+	It("get field: struct pointer", func() {
+		dummyStruct := &TestStruct{
+			Dummy: "test",
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-	tags, err := refl.Tags("test")
-	c.Assert(err, IsNil)
-	c.Assert(tags, DeepEquals, map[string]string{
-		"Dummy": "dummytag",
-		"Yummy": "yummytag",
+		value, err := refl.FieldValue("Dummy")
+		Check(err, IsNil)
+		Check(value, Equals, "test")
 	})
-}
 
-func (s *S) TestTags_on_non_struct(c *C) {
-	dummy := "abc 123"
+	It("get field: non-struct", func() {
+		dummy := "abc 123"
 
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
-
-func (s *S) TestItems_on_struct(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
-
-	tags, err := refl.KeyVal()
-	c.Assert(err, IsNil)
-	c.Assert(tags, DeepEquals, map[string]interface{}{
-		"Dummy": "test",
-		"Yummy": 123,
+		_, err := NewStructReader(dummy)
+		Check(err, NotNil)
 	})
-}
 
-func (s *S) TestItems_on_non_struct(c *C) {
-	dummy := "abc 123"
+	It("get field: non-existing", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
+		_, err = refl.FieldValue("obladioblada")
+		Check(err, NotNil)
+	})
+
+	It("get field: unexported", func() {
+		dummyStruct := TestStruct{
+			unexported: 12345,
+			Dummy:      "test",
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		Check(func() {
+			refl.FieldValue("unexported")
+		}, Panics)
+	})
+
+	It("field kind: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		kind, err := refl.FieldKind("Dummy")
+		Check(err, IsNil)
+		Check(kind, Equals, reflect.String)
+
+		kind, err = refl.FieldKind("Yummy")
+		Check(err, IsNil)
+		Check(kind, Equals, reflect.Int)
+	})
+
+	It("field kind: struct pointer", func() {
+		dummyStruct := &TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		kind, err := refl.FieldKind("Dummy")
+		Check(err, IsNil)
+		Check(kind, Equals, reflect.String)
+
+		kind, err = refl.FieldKind("Yummy")
+		Check(err, IsNil)
+		Check(kind, Equals, reflect.Int)
+	})
+
+	It("field kind: non-struct", func() {
+		dummy := "abc 123"
+
+		_, err := NewStructReader(dummy)
+		Check(err, NotNil)
+	})
+
+	It("field kind: non-existing", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		_, err = refl.FieldKind("obladioblada")
+		Check(err, NotNil)
+	})
+
+	It("field tag: struct", func() {
+		dummyStruct := TestStruct{}
+
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		tag, err := refl.FieldTag("Dummy", "test")
+		Check(err, IsNil)
+		Check(tag, Equals, "dummytag")
+
+		tag, err = refl.FieldTag("Yummy", "test")
+		Check(err, IsNil)
+		Check(tag, Equals, "yummytag")
+	})
+
+	It("field tag: struct pointer", func() {
+		dummyStruct := &TestStruct{}
+
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		tag, err := refl.FieldTag("Dummy", "test")
+		Check(err, IsNil)
+		Check(tag, Equals, "dummytag")
+
+		tag, err = refl.FieldTag("Yummy", "test")
+		Check(err, IsNil)
+		Check(tag, Equals, "yummytag")
+	})
+
+	It("field tag: non-struct", func() {
+		dummy := "abc 123"
+
+		_, err := NewStructReader(dummy)
+		Check(err, NotNil)
+	})
+
+	It("field tag: non-existing", func() {
+		dummyStruct := TestStruct{}
+
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		_, err = refl.FieldTag("obladioblada", "test")
+		Check(err, NotNil)
+	})
+
+	It("field tag: unexported", func() {
+		dummyStruct := TestStruct{
+			unexported: 12345,
+			Dummy:      "test",
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		_, err = refl.FieldTag("unexported", "test")
+		Check(err, NotNil)
+	})
+
+	It("field names: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		fields, err := refl.FieldNames()
+		Check(err, IsNil)
+		Check(fields, Equals, []string{"Dummy", "Yummy"})
+	})
+
+	It("field names: struct pointer", func() {
+		dummyStruct := &TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		fields, err := refl.FieldNames()
+		Check(err, IsNil)
+		Check(fields, Equals, []string{"Dummy", "Yummy"})
+	})
+
+	It("field names: non-struct", func() {
+		dummy := "abc 123"
+
+		_, err := NewStructReader(dummy)
+		Check(err, NotNil)
+	})
+
+	It("field names: non-exported", func() {
+		dummyStruct := TestStruct{
+			unexported: 6789,
+			Dummy:      "test",
+			Yummy:      123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		fields, err := refl.FieldNames()
+		Check(err, IsNil)
+		Check(fields, Equals, []string{"Dummy", "Yummy"})
+	})
+
+	It("tags: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		tags, err := refl.Tags("test")
+		Check(err, IsNil)
+		Check(tags, Equals, map[string]string{
+			"Dummy": "dummytag",
+			"Yummy": "yummytag",
+		})
+	})
+
+	It("tags: non-exported", func() {
+		dummyStruct := &TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		tags, err := refl.Tags("test")
+		Check(err, IsNil)
+		Check(tags, Equals, map[string]string{
+			"Dummy": "dummytag",
+			"Yummy": "yummytag",
+		})
+	})
+
+	//It("tags: non-struct", func() {
+	//	dummy := "abc 123"
+	//
+	//	_, err := NewStructReader(dummy)
+	//	Check(err, NotNil)
+	//})
+	//
+	//It("tags: struct", func() {
+	//func (s *S) TestItems_on_struct(c *C) {
+	//	dummyStruct := TestStruct{
+	//		Dummy: "test",
+	//		Yummy: 123,
+	//	}
+	//	refl, err := NewStructReader(dummyStruct)
+	//	Check(err, IsNil)
+	//
+	//	tags, err := refl.KeyVal()
+	//	Check(err, IsNil)
+	//	Check(tags, Equals, map[string]interface{}{
+	//		"Dummy": "test",
+	//		"Yummy": 123,
+	//	})
+	//}
+	//
+	//func (s *S) TestItems_on_non_struct(c *C) {
+	//	dummy := "abc 123"
+	//
+	//	_, err := NewStructReader(dummy)
+	//	Check(err, NotNil)
+	//}
+
+})

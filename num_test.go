@@ -1,7 +1,7 @@
 package reflector
 
 import (
-	. "launchpad.net/gocheck"
+	. "github.com/101loops/bdd"
 )
 
 type TestData struct {
@@ -11,73 +11,76 @@ type TestData struct {
 	Str   string
 }
 
-func (s *S) TestFloatNumberConversion(c *C) {
-	f := float64(42.0)
+var _ = Describe("Numbers", func() {
 
-	// Float -> Number
+	It("conversion", func() {
+		f := float64(42.0)
 
-	var i int
-	err := Float2Number(f, &i)
-	c.Assert(err, IsNil)
-	c.Assert(i, Equals, int(42))
+		// Float -> Number
 
-	var i32 int32
-	err = Float2Number(f, &i32)
-	c.Assert(err, IsNil)
-	c.Assert(i32, Equals, int32(42))
+		var i int
+		err := Float2Number(f, &i)
+		Check(err, IsNil)
+		Check(i, Equals, int(42))
 
-	var i64 int64
-	err = Float2Number(f, &i64)
-	c.Assert(err, IsNil)
-	c.Assert(i64, Equals, int64(42))
+		var i32 int32
+		err = Float2Number(f, &i32)
+		Check(err, IsNil)
+		Check(i32, Equals, int32(42))
 
-	var str string
-	err = Float2Number(f, &str)
-	c.Assert(err, NotNil)
+		var i64 int64
+		err = Float2Number(f, &i64)
+		Check(err, IsNil)
+		Check(i64, Equals, int64(42))
 
-	// Float -> Field
+		var str string
+		err = Float2Number(f, &str)
+		Check(err, NotNil)
 
-	obj := &TestData{}
-	refl, err := NewStructWriter(obj)
-	c.Assert(err, IsNil)
+		// Float -> Field
 
-	err = refl.SetFieldFloatValue("Num", f)
-	c.Assert(err, IsNil)
-	c.Assert(obj.Num, Equals, int(42))
+		obj := &TestData{}
+		refl, err := NewStructWriter(obj)
+		Check(err, IsNil)
 
-	err = refl.SetFieldFloatValue("Float", f)
-	c.Assert(err, IsNil)
-	c.Assert(obj.Float, Equals, float32(42))
+		err = refl.SetFieldFloatValue("Num", f)
+		Check(err, IsNil)
+		Check(obj.Num, Equals, int(42))
 
-	err = refl.SetFieldFloatValue("Bool", f)
-	c.Assert(err, NotNil)
+		err = refl.SetFieldFloatValue("Float", f)
+		Check(err, IsNil)
+		Check(obj.Float, Equals, float32(42))
 
-	// Number -> Float
+		err = refl.SetFieldFloatValue("Bool", f)
+		Check(err, NotNil)
 
-	f, err = Number2Float(int32(32))
-	c.Assert(err, IsNil)
-	c.Assert(f, Equals, float64(32))
+		// Number -> Float
 
-	f, err = Number2Float(int64(64))
-	c.Assert(err, IsNil)
-	c.Assert(f, Equals, float64(64))
+		f, err = Number2Float(int32(32))
+		Check(err, IsNil)
+		Check(f, Equals, float64(32))
 
-	f, err = Number2Float(str)
-	c.Assert(err, NotNil)
-}
+		f, err = Number2Float(int64(64))
+		Check(err, IsNil)
+		Check(f, Equals, float64(64))
 
-func (s *S) TestIsNumber(c *C) {
-	c.Assert(IsNumber(42), Equals, true)
-	c.Assert(IsNumber(0.4), Equals, true)
-	c.Assert(IsNumber("0.4"), Equals, false)
-	c.Assert(IsNumber(false), Equals, false)
+		f, err = Number2Float(str)
+		Check(err, NotNil)
+	})
 
-	c.Assert(IsDecimalNumber(0.1), Equals, true)
-	c.Assert(IsDecimalNumber(0), Equals, false)
+	It("check", func() {
+		Check(IsNumber(42), Equals, true)
+		Check(IsNumber(0.4), Equals, true)
+		Check(IsNumber("0.4"), Equals, false)
+		Check(IsNumber(false), Equals, false)
 
-	c.Assert(IsSignedNumber(42), Equals, true)
-	c.Assert(IsSignedNumber(uint(42)), Equals, false)
+		Check(IsDecimalNumber(0.1), Equals, true)
+		Check(IsDecimalNumber(0), Equals, false)
 
-	c.Assert(IsUnsignedNumber(42), Equals, false)
-	c.Assert(IsUnsignedNumber(uint(42)), Equals, true)
-}
+		Check(IsSignedNumber(42), Equals, true)
+		Check(IsSignedNumber(uint(42)), Equals, false)
+
+		Check(IsUnsignedNumber(42), Equals, false)
+		Check(IsUnsignedNumber(uint(42)), Equals, true)
+	})
+})

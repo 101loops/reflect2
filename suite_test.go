@@ -1,16 +1,13 @@
 package reflector
 
 import (
-	. "launchpad.net/gocheck"
+	. "github.com/101loops/bdd"
 	"testing"
 )
 
-func Test(t *testing.T) { TestingT(t) }
-
-type S struct {
+func TestSuite(t *testing.T) {
+	RunSpecs(t, "Reflector Suite")
 }
-
-var _ = Suite(&S{})
 
 type TestStruct struct {
 	unexported uint64

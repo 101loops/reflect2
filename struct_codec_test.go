@@ -1,76 +1,79 @@
 package reflector
 
 import (
-	. "launchpad.net/gocheck"
+	. "github.com/101loops/bdd"
 	"reflect"
 )
 
-func (s *S) TestHasField_on_struct_with_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
+var _ = Describe("Struct Codec", func() {
 
-	has := refl.HasField("Dummy")
-	c.Assert(has, Equals, true)
-}
+	It("has field: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestHasField_on_struct_pointer_with_existing_field(c *C) {
-	dummyStruct := &TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
+		has := refl.HasField("Dummy")
+		Check(has, Equals, true)
+	})
 
-	has := refl.HasField("Dummy")
-	c.Assert(has, Equals, true)
-}
+	It("has field: struct pointer", func() {
+		dummyStruct := &TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestHasField_non_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-		Yummy: 123,
-	}
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
+		has := refl.HasField("Dummy")
+		Check(has, Equals, true)
+	})
 
-	has := refl.HasField("Test")
-	c.Assert(has, Equals, false)
-}
+	It("has field: non-existing", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestHasField_on_non_struct(c *C) {
-	dummy := "abc 123"
+		has := refl.HasField("Test")
+		Check(has, Equals, false)
+	})
 
-	_, err := NewStructReader(dummy)
-	c.Assert(err, NotNil)
-}
+	It("has field: non-struct", func() {
+		dummy := "abc 123"
 
-func (s *S) TestHasField_unexported_field(c *C) {
-	dummyStruct := TestStruct{
-		unexported: 7890,
-		Dummy:      "test",
-		Yummy:      123,
-	}
+		_, err := NewStructReader(dummy)
+		Check(err, NotNil)
+	})
 
-	refl, err := NewStructReader(dummyStruct)
-	c.Assert(err, IsNil)
+	It("has field: unexported", func() {
+		dummyStruct := TestStruct{
+			unexported: 7890,
+			Dummy:      "test",
+			Yummy:      123,
+		}
 
-	has := refl.HasField("unexported")
-	c.Assert(has, Equals, false)
-}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestNewStructCodec_from_type(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	t := reflect.TypeOf(dummyStruct)
+		has := refl.HasField("unexported")
+		Check(has, Equals, false)
+	})
 
-	refl, err := NewStructReader(t)
-	c.Assert(err, IsNil)
+	It("codec from type", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+		t := reflect.TypeOf(dummyStruct)
 
-	has := refl.HasField("Dummy")
-	c.Assert(has, Equals, true)
-}
+		refl, err := NewStructReader(t)
+		Check(err, IsNil)
+
+		has := refl.HasField("Dummy")
+		Check(has, Equals, true)
+	})
+})

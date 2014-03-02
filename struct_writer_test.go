@@ -1,65 +1,69 @@
 package reflector
 
 import (
-	. "launchpad.net/gocheck"
+	. "github.com/101loops/bdd"
 )
 
-func (s *S) TestSetField_on_struct_with_valid_value_type(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl, err := NewStructWriter(&dummyStruct)
-	c.Assert(err, IsNil)
+var _ = Describe("Struct Codec Writer", func() {
 
-	err = refl.SetFieldValue("Dummy", "abc")
-	c.Assert(err, IsNil)
-	c.Assert(dummyStruct.Dummy, Equals, "abc")
-}
+	It("set field: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+		refl, err := NewStructWriter(&dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestSetField_on_non_pointer(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
+		err = refl.SetFieldValue("Dummy", "abc")
+		Check(err, IsNil)
+		Check(dummyStruct.Dummy, Equals, "abc")
+	})
 
-	_, err := NewStructWriter(dummyStruct)
-	c.Assert(err, NotNil)
-}
+	It("set field: non-pointer", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
 
-func (s *S) TestSetField_on_non_struct(c *C) {
-	dummy := "abc 123"
+		_, err := NewStructWriter(dummyStruct)
+		Check(err, NotNil)
+	})
 
-	_, err := NewStructWriter(&dummy)
-	c.Assert(err, NotNil)
-}
+	It("set field: non-struct", func() {
+		dummy := "abc 123"
 
-func (s *S) TestSetField_non_existing_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl, err := NewStructWriter(&dummyStruct)
-	c.Assert(err, IsNil)
+		_, err := NewStructWriter(&dummy)
+		Check(err, NotNil)
+	})
 
-	err = refl.SetFieldValue("obladioblada", "life goes on")
-	c.Assert(err, NotNil)
-}
+	It("set field: non-existing", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+		refl, err := NewStructWriter(&dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestSetField_invalid_value_type(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl, err := NewStructWriter(&dummyStruct)
-	c.Assert(err, IsNil)
+		err = refl.SetFieldValue("obladioblada", "life goes on")
+		Check(err, NotNil)
+	})
 
-	err = refl.SetFieldValue("Yummy", "123")
-	c.Assert(err, NotNil)
-}
+	It("set field: invalid value type", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+		refl, err := NewStructWriter(&dummyStruct)
+		Check(err, IsNil)
 
-func (s *S) TestSetField_non_exported_field(c *C) {
-	dummyStruct := TestStruct{
-		Dummy: "test",
-	}
-	refl, err := NewStructWriter(&dummyStruct)
-	c.Assert(err, IsNil)
+		err = refl.SetFieldValue("Yummy", "123")
+		Check(err, NotNil)
+	})
 
-	c.Assert(refl.SetFieldValue("unexported", "fail, bitch"), NotNil)
-}
+	It("set field: non-exported", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+		refl, err := NewStructWriter(&dummyStruct)
+		Check(err, IsNil)
+
+		Check(refl.SetFieldValue("unexported", "fail, bitch"), NotNil)
+	})
+
+})

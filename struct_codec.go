@@ -31,12 +31,12 @@ func NewStructCodec(obj interface{}) (*StructCodec, error) {
 	return nil, fmt.Errorf("reflector: invalid entity type %q", k)
 }
 
-func (codec *StructCodec) Type() reflect.Type {
-	return codec.t
+func (c *StructCodec) Type() reflect.Type {
+	return c.t
 }
 
-func (codec *StructCodec) FieldCodecs(tagNames []string) (res []*FieldCodec, err error) {
-	err = codec.iterate(func(i int, f reflect.StructField) error {
+func (c *StructCodec) FieldCodecs(tagNames []string) (res []*FieldCodec, err error) {
+	err = c.iterate(func(i int, f reflect.StructField) error {
 		code, err := codec(i, f, tagNames)
 		if code != nil {
 			res = append(res, code)
@@ -47,18 +47,18 @@ func (codec *StructCodec) FieldCodecs(tagNames []string) (res []*FieldCodec, err
 }
 
 // HasField checks if the provided field name is part of the struct.
-func (codec *StructCodec) HasField(name string) bool {
-	field, ok := codec.t.FieldByName(name)
+func (c *StructCodec) HasField(name string) bool {
+	field, ok := c.t.FieldByName(name)
 	if !ok || !IsExportableField(field) {
 		return false
 	}
 	return true
 }
 
-func (codec *StructCodec) iterate(fn func(int, reflect.StructField) error) error {
-	fieldsCount := codec.t.NumField()
+func (c *StructCodec) iterate(fn func(int, reflect.StructField) error) error {
+	fieldsCount := c.t.NumField()
 	for i := 0; i < fieldsCount; i++ {
-		field := codec.t.Field(i)
+		field := c.t.Field(i)
 		if IsExportableField(field) {
 			err := fn(i, field)
 			if err != nil {
