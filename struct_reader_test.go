@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-// TESTS ==========================================================================================
+
 
 func (s *S) TestGetField_on_struct(c *C) {
 	dummyStruct := TestStruct{

@@ -6,7 +6,7 @@ import (
 	. "launchpad.net/gocheck"
 )
 
-// TESTS ==========================================================================================
+
 
 func (s *S) TestSetField_on_struct_with_valid_value_type(c *C) {
 	dummyStruct := TestStruct{

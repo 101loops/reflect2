@@ -6,7 +6,7 @@ import (
 	. "launchpad.net/gocheck"
 )
 
-// TESTS ==========================================================================================
+
 
 type TestData struct {
 	Num   int

@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-// TESTS ==========================================================================================
+
 
 func (s *S) TestHasField_on_struct_with_existing_field(c *C) {
 	dummyStruct := TestStruct{

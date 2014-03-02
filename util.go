@@ -57,7 +57,7 @@ func IsDefault(obj interface{}) (b bool) {
 	return
 }
 
-// HELPERS ========================================================================================
+
 
 func isStructType(typ reflect.Type) bool {
 	return typ.Kind() == reflect.Struct

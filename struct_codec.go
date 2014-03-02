@@ -18,7 +18,7 @@ type FieldCodec struct {
 	Type  reflect.Type
 }
 
-// FACTORY ========================================================================================
+
 
 func NewStructCodec(obj interface{}) (*StructCodec, error) {
 	v := reflect.ValueOf(obj)
@@ -33,7 +33,7 @@ func NewStructCodec(obj interface{}) (*StructCodec, error) {
 	return nil, fmt.Errorf("reflector: invalid entity type %q", k)
 }
 
-// PUBLIC METHODS =================================================================================
+
 
 func (codec *StructCodec) Type() reflect.Type {
 	return codec.t
@@ -59,7 +59,7 @@ func (codec *StructCodec) HasField(name string) bool {
 	return true
 }
 
-// PRIVATE METHODS ================================================================================
+
 
 func (codec *StructCodec) iterate(fn func(int, reflect.StructField) error) error {
 	fieldsCount := codec.t.NumField()
@@ -75,7 +75,7 @@ func (codec *StructCodec) iterate(fn func(int, reflect.StructField) error) error
 	return nil
 }
 
-// HELPERS ========================================================================================
+
 
 func codec(i int, f reflect.StructField, tagNames []string) (res *FieldCodec, err error) {
 	t := f.Type

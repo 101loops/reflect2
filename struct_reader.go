@@ -16,7 +16,7 @@ type Field struct {
 	Data interface{}
 }
 
-// FACTORY ========================================================================================
+
 
 func NewStructReader(obj interface{}) (*StructReader, error) {
 	codec, err := NewStructCodec(obj)
@@ -33,7 +33,7 @@ func NewStructReader(obj interface{}) (*StructReader, error) {
 	return &StructReader{codec, obj, v}, nil
 }
 
-// PUBLIC METHODS =================================================================================
+
 
 // Fields iterates over the struct's fields and calls the provided function with each field.
 func (reader *StructReader) Iterate(tagNames []string, fn func(*Field) error) error {
@@ -141,7 +141,7 @@ func (reader *StructReader) KeyVal() (map[string]interface{}, error) {
 	return items, nil
 }
 
-// HELPERS ========================================================================================
+
 
 func field(i int, v reflect.Value, f reflect.StructField, tagNames []string) (*Field, error) {
 	codec, err := codec(i, f, tagNames)

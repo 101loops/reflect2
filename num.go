@@ -85,7 +85,7 @@ func IsSignedNumber(obj interface{}) bool {
 	return isSignedNumberKind(reflect.TypeOf(obj).Kind())
 }
 
-// HELPERS ========================================================================================
+
 
 func isNumberKind(kind reflect.Kind) bool {
 	return isSignedNumberKind(kind) || isUnsignedNumberKind(kind) || isDecimalNumberKind(kind)
