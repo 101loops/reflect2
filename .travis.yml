@@ -1,9 +1,9 @@
 language: go
-script: go test -v -bench=".*"
+go:
+  - 1.1
+  - 1.2
 
 install:
   - go get launchpad.net/gocheck
 
-go:
-  - 1.1
-  - 1.2
+script: go test -v ./...
