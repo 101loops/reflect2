@@ -4,6 +4,6 @@ go:
   - 1.2
 
 install:
-  - go get launchpad.net/gocheck
+  - go get github.com/101loops/bdd
 
 script: go test -v ./...
