@@ -1,13 +1,9 @@
-// +build unit
-
 package reflector
 
 import (
 	. "launchpad.net/gocheck"
 	"reflect"
 )
-
-
 
 func (s *S) TestHasField_on_struct_with_existing_field(c *C) {
 	dummyStruct := TestStruct{

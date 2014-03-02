@@ -9,8 +9,6 @@ type StructWriter struct {
 	*StructReader
 }
 
-
-
 func NewStructWriter(obj interface{}) (*StructWriter, error) {
 	v := reflect.ValueOf(obj)
 	if v.Kind() != reflect.Ptr {
@@ -24,8 +22,6 @@ func NewStructWriter(obj interface{}) (*StructWriter, error) {
 
 	return &StructWriter{reader}, nil
 }
-
-
 
 // SetField sets the struct's field to the provided value.
 func (writer *StructWriter) SetFieldValue(name string, value interface{}) (err error) {

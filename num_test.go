@@ -1,12 +1,8 @@
-// +build unit
-
 package reflector
 
 import (
 	. "launchpad.net/gocheck"
 )
-
-
 
 type TestData struct {
 	Num   int

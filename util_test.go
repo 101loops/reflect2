@@ -1,5 +1,3 @@
-// +build unit
-
 package reflector
 
 import (
@@ -12,8 +10,6 @@ var (
 )
 
 type MyString string
-
-
 
 func (s *S) TestDefault(c *C) {
 

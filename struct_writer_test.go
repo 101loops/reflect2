@@ -1,12 +1,8 @@
-// +build unit
-
 package reflector
 
 import (
 	. "launchpad.net/gocheck"
 )
-
-
 
 func (s *S) TestSetField_on_struct_with_valid_value_type(c *C) {
 	dummyStruct := TestStruct{
