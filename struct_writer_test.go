@@ -6,6 +6,22 @@ import (
 
 var _ = Describe("Struct Codec Writer", func() {
 
+	It("create from non-struct", func() {
+		dummy := "abc 123"
+
+		_, err := NewStructWriter(&dummy)
+		Check(err, NotNil)
+	})
+
+	It("create from non-pointer", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+		}
+
+		_, err := NewStructWriter(dummyStruct)
+		Check(err, NotNil)
+	})
+
 	It("set field: struct", func() {
 		dummyStruct := TestStruct{
 			Dummy: "test",
@@ -16,22 +32,6 @@ var _ = Describe("Struct Codec Writer", func() {
 		err = refl.SetFieldValue("Dummy", "abc")
 		Check(err, IsNil)
 		Check(dummyStruct.Dummy, Equals, "abc")
-	})
-
-	It("set field: non-pointer", func() {
-		dummyStruct := TestStruct{
-			Dummy: "test",
-		}
-
-		_, err := NewStructWriter(dummyStruct)
-		Check(err, NotNil)
-	})
-
-	It("set field: non-struct", func() {
-		dummy := "abc 123"
-
-		_, err := NewStructWriter(&dummy)
-		Check(err, NotNil)
 	})
 
 	It("set field: non-existing", func() {

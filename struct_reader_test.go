@@ -7,6 +7,13 @@ import (
 
 var _ = Describe("Struct Codec Reader", func() {
 
+	It("create from non-struct", func() {
+		dummy := "abc 123"
+
+		_, err := NewStructReader(dummy)
+		Check(err, NotNil)
+	})
+
 	It("get field: struct", func() {
 		dummyStruct := TestStruct{
 			Dummy: "test",
@@ -30,13 +37,6 @@ var _ = Describe("Struct Codec Reader", func() {
 		value, err := refl.FieldValue("Dummy")
 		Check(err, IsNil)
 		Check(value, Equals, "test")
-	})
-
-	It("get field: non-struct", func() {
-		dummy := "abc 123"
-
-		_, err := NewStructReader(dummy)
-		Check(err, NotNil)
 	})
 
 	It("get field: non-existing", func() {
@@ -97,13 +97,6 @@ var _ = Describe("Struct Codec Reader", func() {
 		Check(kind, Equals, reflect.Int)
 	})
 
-	It("field kind: non-struct", func() {
-		dummy := "abc 123"
-
-		_, err := NewStructReader(dummy)
-		Check(err, NotNil)
-	})
-
 	It("field kind: non-existing", func() {
 		dummyStruct := TestStruct{
 			Dummy: "test",
@@ -144,13 +137,6 @@ var _ = Describe("Struct Codec Reader", func() {
 		tag, err = refl.FieldTag("Yummy", "test")
 		Check(err, IsNil)
 		Check(tag, Equals, "yummytag")
-	})
-
-	It("field tag: non-struct", func() {
-		dummy := "abc 123"
-
-		_, err := NewStructReader(dummy)
-		Check(err, NotNil)
 	})
 
 	It("field tag: non-existing", func() {
@@ -201,13 +187,6 @@ var _ = Describe("Struct Codec Reader", func() {
 		Check(fields, Equals, []string{"Dummy", "Yummy"})
 	})
 
-	It("field names: non-struct", func() {
-		dummy := "abc 123"
-
-		_, err := NewStructReader(dummy)
-		Check(err, NotNil)
-	})
-
 	It("field names: non-exported", func() {
 		dummyStruct := TestStruct{
 			unexported: 6789,
@@ -254,35 +233,20 @@ var _ = Describe("Struct Codec Reader", func() {
 		})
 	})
 
-	//It("tags: non-struct", func() {
-	//	dummy := "abc 123"
-	//
-	//	_, err := NewStructReader(dummy)
-	//	Check(err, NotNil)
-	//})
-	//
-	//It("tags: struct", func() {
-	//func (s *S) TestItems_on_struct(c *C) {
-	//	dummyStruct := TestStruct{
-	//		Dummy: "test",
-	//		Yummy: 123,
-	//	}
-	//	refl, err := NewStructReader(dummyStruct)
-	//	Check(err, IsNil)
-	//
-	//	tags, err := refl.KeyVal()
-	//	Check(err, IsNil)
-	//	Check(tags, Equals, map[string]interface{}{
-	//		"Dummy": "test",
-	//		"Yummy": 123,
-	//	})
-	//}
-	//
-	//func (s *S) TestItems_on_non_struct(c *C) {
-	//	dummy := "abc 123"
-	//
-	//	_, err := NewStructReader(dummy)
-	//	Check(err, NotNil)
-	//}
+	It("key val: struct", func() {
+		dummyStruct := TestStruct{
+			Dummy: "test",
+			Yummy: 123,
+		}
+		refl, err := NewStructReader(dummyStruct)
+		Check(err, IsNil)
+
+		tags, err := refl.KeyVal()
+		Check(err, IsNil)
+		Check(tags, Equals, map[string]interface{}{
+			"Dummy": "test",
+			"Yummy": 123,
+		})
+	})
 
 })
