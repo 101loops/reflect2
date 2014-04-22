@@ -1,4 +1,4 @@
-package reflector
+package reflect2
 
 import (
 	"fmt"
