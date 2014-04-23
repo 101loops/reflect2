@@ -6,63 +6,63 @@ import (
 )
 
 func Float2Number(src float64, dst interface{}) (err error) {
-	switch target := target.(type) {
+	switch dst := dst.(type) {
 	case *int:
-		*target = int(src)
+		*dst = int(src)
 	case *int8:
-		*target = int8(src)
+		*dst = int8(src)
 	case *int16:
-		*target = int16(src)
+		*dst = int16(src)
 	case *int32:
-		*target = int32(src)
+		*dst = int32(src)
 	case *int64:
-		*target = int64(src)
+		*dst = int64(src)
 	case *uint:
-		*target = uint(src)
+		*dst = uint(src)
 	case *uint8:
-		*target = uint8(src)
+		*dst = uint8(src)
 	case *uint16:
-		*target = uint16(src)
+		*dst = uint16(src)
 	case *uint32:
-		*target = uint32(src)
+		*dst = uint32(src)
 	case *uint64:
-		*target = uint64(src)
+		*dst = uint64(src)
 	case *float32:
-		*target = float32(src)
+		*dst = float32(src)
 	case *float64:
-		*target = src
+		*dst = src
 	default:
-		err = fmt.Errorf("target (%T) is not a number", target)
+		err = fmt.Errorf("dst (%T) is not a number", dst)
 	}
 	return
 }
 
-func Number2Float(src interface{}) (target float64, err error) {
+func Number2Float(src interface{}) (dst float64, err error) {
 	switch num := src.(type) {
 	case int:
-		target = float64(num)
+		dst = float64(num)
 	case int8:
-		target = float64(num)
+		dst = float64(num)
 	case int16:
-		target = float64(num)
+		dst = float64(num)
 	case int32:
-		target = float64(num)
+		dst = float64(num)
 	case int64:
-		target = float64(num)
+		dst = float64(num)
 	case uint:
-		target = float64(num)
+		dst = float64(num)
 	case uint8:
-		target = float64(num)
+		dst = float64(num)
 	case uint16:
-		target = float64(num)
+		dst = float64(num)
 	case uint32:
-		target = float64(num)
+		dst = float64(num)
 	case uint64:
-		target = float64(num)
+		dst = float64(num)
 	case float32:
-		target = float64(num)
+		dst = float64(num)
 	case float64:
-		target = num
+		dst = num
 	default:
 		err = fmt.Errorf("source (%T) is not a number", src)
 	}
