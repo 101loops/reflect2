@@ -16,19 +16,19 @@ type Field struct {
 	Data interface{}
 }
 
-func NewStructReader(obj interface{}) (*StructReader, error) {
-	codec, err := NewStructCodec(obj)
+func NewStructReader(src interface{}) (*StructReader, error) {
+	codec, err := NewStructCodec(src)
 	if err != nil {
 		return nil, err
 	}
 
 	// dereference pointer
-	v := reflect.ValueOf(obj)
+	v := reflect.ValueOf(src)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
 	}
 
-	return &StructReader{codec, obj, v}, nil
+	return &StructReader{codec, src, v}, nil
 }
 
 // Fields iterates over the struct's fields and calls the provided function with each field.

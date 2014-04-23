@@ -9,13 +9,13 @@ type StructWriter struct {
 	*StructReader
 }
 
-func NewStructWriter(obj interface{}) (*StructWriter, error) {
-	v := reflect.ValueOf(obj)
+func NewStructWriter(dst interface{}) (*StructWriter, error) {
+	v := reflect.ValueOf(dst)
 	if v.Kind() != reflect.Ptr {
 		return nil, fmt.Errorf("reflector: writer requires pointer to struct")
 	}
 
-	reader, err := NewStructReader(obj)
+	reader, err := NewStructReader(dst)
 	if err != nil {
 		return nil, err
 	}

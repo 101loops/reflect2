@@ -18,10 +18,10 @@ type FieldCodec struct {
 	Type  reflect.Type
 }
 
-func NewStructCodec(obj interface{}) (*StructCodec, error) {
-	v := reflect.ValueOf(obj)
+func NewStructCodec(src interface{}) (*StructCodec, error) {
+	v := reflect.ValueOf(src)
 	k := v.Kind()
-	if t, ok := obj.(reflect.Type); ok {
+	if t, ok := src.(reflect.Type); ok {
 		return &StructCodec{t}, nil
 	} else if k == reflect.Struct {
 		return &StructCodec{v.Type()}, nil
