@@ -6,7 +6,7 @@ import (
 )
 
 func TestSuite(t *testing.T) {
-	RunSpecs(t, "Reflector Suite")
+	RunSpecs(t, "Reflect2 Suite")
 }
 
 type TestStruct struct {
