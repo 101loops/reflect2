@@ -1,4 +1,4 @@
-package reflect2
+package reflector
 
 import (
 	"fmt"
@@ -81,7 +81,7 @@ func (reader *StructReader) Tags(key string) (map[string]string, error) {
 func (reader *StructReader) FieldValue(name string) (interface{}, error) {
 	field := reader.val.FieldByName(name)
 	if !field.IsValid() {
-		return nil, fmt.Errorf("reflect2: no such field '%s' in obj", name)
+		return nil, fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
 	return field.Interface(), nil
 }
@@ -90,7 +90,7 @@ func (reader *StructReader) FieldValue(name string) (interface{}, error) {
 func (reader *StructReader) FieldType(name string) (reflect.Type, error) {
 	field := reader.val.FieldByName(name)
 	if !field.IsValid() {
-		return nil, fmt.Errorf("reflect2: no such field '%s' in obj", name)
+		return nil, fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
 	return field.Type(), nil
 }
@@ -108,11 +108,11 @@ func (reader *StructReader) FieldKind(name string) (reflect.Kind, error) {
 func (reader *StructReader) FieldTag(name, tagKey string) (string, error) {
 	field, ok := reader.Type().FieldByName(name)
 	if !ok {
-		return "", fmt.Errorf("reflect2: no such field '%s' in obj", name)
+		return "", fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
 
 	if !IsExportableField(field) {
-		return "", fmt.Errorf("reflect2: cannot access non-exported field")
+		return "", fmt.Errorf("reflector: cannot access non-exported field")
 	}
 
 	return field.Tag.Get(tagKey), nil

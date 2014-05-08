@@ -1,4 +1,4 @@
-package reflect2
+package reflector
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ type StructWriter struct {
 func NewStructWriter(dst interface{}) (*StructWriter, error) {
 	v := reflect.ValueOf(dst)
 	if v.Kind() != reflect.Ptr {
-		return nil, fmt.Errorf("reflect2: writer requires pointer to struct")
+		return nil, fmt.Errorf("reflector: writer requires pointer to struct")
 	}
 
 	reader, err := NewStructReader(dst)
@@ -27,7 +27,7 @@ func NewStructWriter(dst interface{}) (*StructWriter, error) {
 func (writer *StructWriter) SetFieldValue(name string, value interface{}) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("reflect2: panic: %v", r)
+			err = fmt.Errorf("reflector: panic: %v", r)
 		}
 	}()
 
@@ -35,17 +35,17 @@ func (writer *StructWriter) SetFieldValue(name string, value interface{}) (err e
 	structFieldValue := structValue.FieldByName(name)
 
 	if !structFieldValue.IsValid() {
-		return fmt.Errorf("reflect2: no such field '%s' in obj", name)
+		return fmt.Errorf("reflector: no such field '%s' in obj", name)
 	}
 
 	if !structFieldValue.CanSet() {
-		return fmt.Errorf("reflect2: cannot set '%s' field value", name)
+		return fmt.Errorf("reflector: cannot set '%s' field value", name)
 	}
 
 	structFieldType := structFieldValue.Type()
 	val := reflect.ValueOf(value)
 	if structFieldType != val.Type() {
-		return fmt.Errorf("reflect2: value type did not match struct's field type")
+		return fmt.Errorf("reflector: value type did not match struct's field type")
 	}
 
 	structFieldValue.Set(val)
@@ -81,7 +81,7 @@ func (writer *StructWriter) SetFieldFloatValue(field string, source float64) (er
 		case reflect.Float64:
 			apply = source
 		default:
-			return fmt.Errorf("reflect2: field '%T' is not a number", field)
+			return fmt.Errorf("reflector: field '%T' is not a number", field)
 		}
 		err = writer.SetFieldValue(field, apply)
 	}

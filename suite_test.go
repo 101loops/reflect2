@@ -1,4 +1,4 @@
-package reflect2
+package reflector
 
 import (
 	. "github.com/101loops/bdd"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestSuite(t *testing.T) {
-	RunSpecs(t, "Reflect2 Suite")
+	RunSpecs(t, "reflector Suite")
 }
 
 type TestStruct struct {
