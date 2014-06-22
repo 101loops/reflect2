@@ -15,4 +15,4 @@ This Go package extends the standard package *reflect* with useful utilities:
 Source code taken and (heavily) modified from [Théo Crevon](http://godoc.org/github.com/oleiade/reflections).
 
 ### License
-MIT (see LICENSE).
+Apache 2 (see LICENSE).
