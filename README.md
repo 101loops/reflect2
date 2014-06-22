@@ -5,14 +5,16 @@ This Go package extends the standard package *reflect* with useful utilities:
 - high-level reflection methods for structs
 - IsNumber utility
 
-### Installation
-`go get github.com/101loops/reflector`
+## Install
+```bash 
+go get github.com/101loops/reflector
+```
 
-### Documentation
+## Documentation
 [godoc.org](http://godoc.org/github.com/101loops/reflector)
 
-### Credit
+## Credit
 Source code taken and (heavily) modified from [Théo Crevon](http://godoc.org/github.com/oleiade/reflections).
 
-### License
+## License
 Apache 2 (see LICENSE).
