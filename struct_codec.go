@@ -28,7 +28,7 @@ func NewStructCodec(src interface{}) (*StructCodec, error) {
 	} else if k == reflect.Ptr && v.Elem().Kind() == reflect.Struct {
 		return &StructCodec{v.Elem().Type()}, nil
 	}
-	return nil, fmt.Errorf("reflector: invalid entity type %q", k)
+	return nil, fmt.Errorf("reflector: is not a struct, reflect.Type or pointer to struct, but %q", k)
 }
 
 func (c *StructCodec) Type() reflect.Type {
