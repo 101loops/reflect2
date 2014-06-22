@@ -5,6 +5,7 @@ This Go package extends the standard package *reflect* with useful utilities:
 - high-level reflection methods for structs
 - IsNumber utility
 
+
 ## Install
 ```bash 
 go get github.com/101loops/reflector
