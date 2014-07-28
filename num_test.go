@@ -1,8 +1,8 @@
 package reflector
 
 import (
-	. "github.com/101loops/bdd"
 	"math/cmplx"
+	. "github.com/101loops/bdd"
 )
 
 var _ = Describe("Numbers", func() {
@@ -17,6 +17,16 @@ var _ = Describe("Numbers", func() {
 			Check(err, IsNil)
 			Check(i, EqualsNum, 42)
 
+			var i8 int8
+			err = Float2Number(f, &i8)
+			Check(err, IsNil)
+			Check(i8, EqualsNum, 42)
+
+			var i16 int16
+			err = Float2Number(f, &i16)
+			Check(err, IsNil)
+			Check(i16, EqualsNum, 42)
+
 			var i32 int32
 			err = Float2Number(f, &i32)
 			Check(err, IsNil)
@@ -27,23 +37,62 @@ var _ = Describe("Numbers", func() {
 			Check(err, IsNil)
 			Check(i64, EqualsNum, 42)
 
+			var ui uint
+			err = Float2Number(f, &ui)
+			Check(err, IsNil)
+			Check(ui, EqualsNum, 42)
+
+			var ui8 uint8
+			err = Float2Number(f, &ui8)
+			Check(err, IsNil)
+			Check(ui8, EqualsNum, 42)
+
+			var ui16 uint16
+			err = Float2Number(f, &ui16)
+			Check(err, IsNil)
+			Check(ui16, EqualsNum, 42)
+
+			var ui32 uint32
+			err = Float2Number(f, &ui32)
+			Check(err, IsNil)
+			Check(ui32, EqualsNum, 42)
+
+			var ui64 uint64
+			err = Float2Number(f, &ui64)
+			Check(err, IsNil)
+			Check(ui64, EqualsNum, 42)
+
+			var f32 float32
+			err = Float2Number(f, &f32)
+			Check(err, IsNil)
+			Check(f32, EqualsNum, 42)
+
+			var f64 float64
+			err = Float2Number(f, &f64)
+			Check(err, IsNil)
+			Check(f64, EqualsNum, 42)
+
 			var str string
 			err = Float2Number(f, &str)
-			Check(err, NotNil)
+			Check(err, Contains, "reflector: dst is not a number, but *string")
 		})
 
 		It("number -> float", func() {
-			f, err := Number2Float(int32(32))
-			Check(err, IsNil)
-			Check(f, EqualsNum, 32)
+			fixture := []interface{}{
+				int(42), int8(42), int16(42), int32(42), int64(42),
+				uint(42), uint8(42), uint16(42), uint32(42), uint64(42),
+				float32(42), float64(42),
+			}
 
-			f, err = Number2Float(int64(64))
-			Check(err, IsNil)
-			Check(f, EqualsNum, 64)
+			for _, num := range fixture {
+				f, err := Number2Float(num)
+				Check(err, IsNil)
+				Check(f, EqualsNum, 42)
+			}
 
 			var str string
-			f, err = Number2Float(str)
-			Check(err, NotNil)
+			_, err := Number2Float(str)
+			Check(err, Contains, "reflector: src is not a number, but string")
 		})
 	})
 

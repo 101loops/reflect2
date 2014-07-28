@@ -2,22 +2,27 @@ package reflector
 
 import "reflect"
 
+// IsNumber returns true when the passed-in value has a numeric type.
 func IsNumber(obj interface{}) bool {
 	return isNumberKind(reflect.TypeOf(obj).Kind())
 }
 
+// IsDecimalNumber returns true when the passed-in value is a decimal number.
 func IsDecimalNumber(obj interface{}) bool {
 	return isDecimalNumberKind(reflect.TypeOf(obj).Kind())
 }
 
+// IsUnsignedNumber returns true when the passed-in value is an unsigned number.
 func IsUnsignedNumber(obj interface{}) bool {
 	return isUnsignedNumberKind(reflect.TypeOf(obj).Kind())
 }
 
+// IsSignedNumber returns true when the passed-in value is a signed number.
 func IsSignedNumber(obj interface{}) bool {
 	return isSignedNumberKind(reflect.TypeOf(obj).Kind())
 }
 
+// IsComplexNumber returns true when the passed-in value is a complex number.
 func IsComplexNumber(obj interface{}) bool {
 	return isComplexNumberKind(reflect.TypeOf(obj).Kind())
 }

@@ -2,10 +2,7 @@ package reflector
 
 import "reflect"
 
-func IsExportableField(field reflect.StructField) bool {
-	return field.PkgPath == "" // PkgPath is empty for exported fields.
-}
-
+// IsStruct returns true when the passed-in value is a struct type.
 func IsStruct(obj interface{}) bool {
 	return isStructType(reflect.TypeOf(obj))
 }
@@ -14,6 +11,7 @@ func isStructType(typ reflect.Type) bool {
 	return typ.Kind() == reflect.Struct
 }
 
+// IsPointer returns true when the passed-in value is a pointer.
 func IsPointer(obj interface{}) bool {
 	return isPointerType(reflect.TypeOf(obj))
 }

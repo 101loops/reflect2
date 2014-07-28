@@ -14,8 +14,5 @@ go get github.com/101loops/reflector
 ## Documentation
 [godoc.org](http://godoc.org/github.com/101loops/reflector)
 
-## Credit
-Source code taken and (heavily) modified from [Théo Crevon](http://godoc.org/github.com/oleiade/reflections).
-
 ## License
-Apache 2 (see LICENSE).
+MIT (see LICENSE).

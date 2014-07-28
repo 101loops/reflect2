@@ -2,66 +2,70 @@ package reflector
 
 import "fmt"
 
-func Float2Number(src float64, dst interface{}) (err error) {
+// Float2Number receives a floating number and writes its value to the
+// passed-in destination. Destination must be a pointer to any numeric type.
+func Float2Number(num float64, dst interface{}) (err error) {
 	switch dst := dst.(type) {
 	case *int:
-		*dst = int(src)
+		*dst = int(num)
 	case *int8:
-		*dst = int8(src)
+		*dst = int8(num)
 	case *int16:
-		*dst = int16(src)
+		*dst = int16(num)
 	case *int32:
-		*dst = int32(src)
+		*dst = int32(num)
 	case *int64:
-		*dst = int64(src)
+		*dst = int64(num)
 	case *uint:
-		*dst = uint(src)
+		*dst = uint(num)
 	case *uint8:
-		*dst = uint8(src)
+		*dst = uint8(num)
 	case *uint16:
-		*dst = uint16(src)
+		*dst = uint16(num)
 	case *uint32:
-		*dst = uint32(src)
+		*dst = uint32(num)
 	case *uint64:
-		*dst = uint64(src)
+		*dst = uint64(num)
 	case *float32:
-		*dst = float32(src)
+		*dst = float32(num)
 	case *float64:
-		*dst = src
+		*dst = num
 	default:
-		err = fmt.Errorf("dst (%T) is not a number", dst)
+		err = fmt.Errorf("reflector: dst is not a number, but %T", dst)
 	}
 	return
 }
 
-func Number2Float(src interface{}) (dst float64, err error) {
+// Number2Float converts the passed-in value to a floating number.
+// It returns an error if the value does not have a numeric type.
+func Number2Float(src interface{}) (ret float64, err error) {
 	switch num := src.(type) {
 	case int:
-		dst = float64(num)
+		ret = float64(num)
 	case int8:
-		dst = float64(num)
+		ret = float64(num)
 	case int16:
-		dst = float64(num)
+		ret = float64(num)
 	case int32:
-		dst = float64(num)
+		ret = float64(num)
 	case int64:
-		dst = float64(num)
+		ret = float64(num)
 	case uint:
-		dst = float64(num)
+		ret = float64(num)
 	case uint8:
-		dst = float64(num)
+		ret = float64(num)
 	case uint16:
-		dst = float64(num)
+		ret = float64(num)
 	case uint32:
-		dst = float64(num)
+		ret = float64(num)
 	case uint64:
-		dst = float64(num)
+		ret = float64(num)
 	case float32:
-		dst = float64(num)
+		ret = float64(num)
 	case float64:
-		dst = num
+		ret = num
 	default:
-		err = fmt.Errorf("source (%T) is not a number", src)
+		err = fmt.Errorf("reflector: src is not a number, but %T", src)
 	}
 	return
 }
